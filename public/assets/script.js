@@ -60,6 +60,21 @@
     revealEls.forEach(function(el){ el.classList.add('in-view'); });
   }
 
+  // Formulário "Fale com a gente" — abre o WhatsApp com a mensagem pronta
+  var quickMsgForm = document.getElementById('quickMsgForm');
+  if(quickMsgForm){
+    quickMsgForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var input = document.getElementById('quickMsgInput');
+      var value = (input && input.value || '').trim();
+      if(!value){ return; }
+      var base = 'Olá! Vim pelo site da CRVL Store e queria saber sobre: ';
+      var url = 'https://wa.me/5511982291198?text=' + encodeURIComponent(base + value);
+      window.open(url, '_blank', 'noopener');
+      if(input){ input.value = ''; }
+    });
+  }
+
   // Vídeo de fundo do hero — respeita prefers-reduced-motion
   var heroVideo = document.querySelector('.hero-video');
   if(heroVideo){
@@ -69,5 +84,47 @@
       heroVideo.pause();
     }
   }
+
+  // Arrastar com o mouse nas fileiras horizontais (ex.: "Escolha seu modelo")
+  // O scroll por toque/trackpad já funciona nativamente; isso cobre o mouse.
+  function makeDraggable(el){
+    if(!el) return;
+    var isDown = false;
+    var startX = 0;
+    var startScroll = 0;
+    var moved = 0;
+
+    el.addEventListener('mousedown', function(e){
+      isDown = true;
+      moved = 0;
+      el.classList.add('dragging');
+      startX = e.pageX;
+      startScroll = el.scrollLeft;
+    });
+
+    window.addEventListener('mouseup', function(){
+      if(!isDown) return;
+      isDown = false;
+      el.classList.remove('dragging');
+    });
+
+    window.addEventListener('mousemove', function(e){
+      if(!isDown) return;
+      e.preventDefault();
+      var dx = e.pageX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      el.scrollLeft = startScroll - dx;
+    });
+
+    // Se o mouse arrastou de verdade, cancela o clique do link logo em seguida
+    // (evita abrir a página errada sem querer ao soltar depois de arrastar).
+    el.addEventListener('click', function(e){
+      if(moved > 6){
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, true);
+  }
+  makeDraggable(document.querySelector('.model-row'));
 
 })();

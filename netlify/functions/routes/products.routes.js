@@ -5,6 +5,7 @@ const db = require('../lib/db');
 const { slugify, asyncHandler, parseIntId } = require('../lib/http-utils');
 const { log } = require('../lib/auth');
 const { deleteImage } = require('../lib/upload');
+const { VALID_CATEGORY_SLUGS } = require('../lib/category-tags');
 
 const router = express.Router();
 
@@ -54,6 +55,14 @@ async function validateProductPayload(b, { partial } = {}) {
   if (b.images !== undefined && b.images !== null && !Array.isArray(b.images)) errors.push('Imagens deve ser uma lista.');
   if (b.tags !== undefined && b.tags !== null && !Array.isArray(b.tags)) errors.push('Tags deve ser uma lista.');
 
+  if (b.category_tags !== undefined && b.category_tags !== null) {
+    if (!Array.isArray(b.category_tags)) {
+      errors.push('Categorias deve ser uma lista.');
+    } else if (b.category_tags.some((s) => !VALID_CATEGORY_SLUGS.has(s))) {
+      errors.push('Uma ou mais categorias selecionadas são inválidas.');
+    }
+  }
+
   return errors;
 }
 
@@ -64,6 +73,7 @@ function rowToProduct(row) {
     colors: JSON.parse(row.colors || '[]'),
     images: JSON.parse(row.images || '[]'),
     tags: JSON.parse(row.tags || '[]'),
+    category_tags: JSON.parse(row.category_tags || '[]'),
     featured: !!row.featured,
     active: !!row.active,
   };
@@ -99,6 +109,16 @@ router.get(
     if (q.category) {
       clauses.push('category_id = (SELECT id FROM categories WHERE slug = ?)');
       params.push(q.category);
+    }
+    if (q.categories) {
+      const slugs = String(q.categories)
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => VALID_CATEGORY_SLUGS.has(s));
+      if (slugs.length) {
+        clauses.push(`(${slugs.map(() => 'category_tags ILIKE ?').join(' OR ')})`);
+        slugs.forEach((s) => params.push(`%"${s}"%`));
+      }
     }
     if (q.brand) {
       clauses.push('LOWER(brand) = LOWER(?)');
@@ -182,8 +202,8 @@ router.post(
 
     const slug = await uniqueSlug(b.name);
     const info = await db.run(
-      `INSERT INTO products (name, slug, category_id, brand, sku, description, price, promo_price, sizes, colors, images, tags, stock, featured, active, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+      `INSERT INTO products (name, slug, category_id, brand, sku, description, price, promo_price, sizes, colors, images, tags, category_tags, stock, featured, active, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
       [
         String(b.name).trim(),
         slug,
@@ -197,6 +217,7 @@ router.post(
         JSON.stringify(b.colors || []),
         JSON.stringify(b.images || []),
         JSON.stringify(b.tags || []),
+        JSON.stringify(b.category_tags || []),
         Number(b.stock) || 0,
         b.featured ? 1 : 0,
         b.active === false ? 0 : 1,
@@ -224,7 +245,7 @@ router.put(
     await db.run(
       `UPDATE products SET
         name = ?, slug = ?, category_id = ?, brand = ?, sku = ?, description = ?, price = ?, promo_price = ?,
-        sizes = ?, colors = ?, images = ?, tags = ?, stock = ?, featured = ?, active = ?, updated_at = NOW()
+        sizes = ?, colors = ?, images = ?, tags = ?, category_tags = ?, stock = ?, featured = ?, active = ?, updated_at = NOW()
        WHERE id = ?`,
       [
         b.name != null ? String(b.name).trim() : existing.name,
@@ -241,6 +262,7 @@ router.put(
         JSON.stringify(b.colors ?? JSON.parse(existing.colors)),
         JSON.stringify(b.images ?? JSON.parse(existing.images)),
         JSON.stringify(b.tags ?? JSON.parse(existing.tags)),
+        JSON.stringify(b.category_tags ?? JSON.parse(existing.category_tags || '[]')),
         b.stock != null ? Number(b.stock) : existing.stock,
         b.featured != null ? (b.featured ? 1 : 0) : existing.featured,
         b.active != null ? (b.active ? 1 : 0) : existing.active,

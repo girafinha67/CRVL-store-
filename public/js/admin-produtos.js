@@ -2,7 +2,6 @@
   'use strict';
 
   let products = [];
-  let categories = [];
   let currentImages = [];
   let deleteTargetId = null;
   let searchTerm = '';
@@ -13,8 +12,23 @@
 
   function money(n) { return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 
-  function categoryOptionsHtml(selectedId) {
-    return categories.map((c) => `<option value="${c.id}" ${String(c.id) === String(selectedId) ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
+  function categoryTagLabel(slug) {
+    const found = window.CRVL_CATEGORY_TAGS.find((c) => c.slug === slug);
+    return found ? found.label : slug;
+  }
+
+  function renderCategoryTagCheckboxes(selected) {
+    const container = document.getElementById('categoryTags');
+    const sel = selected || [];
+    container.innerHTML = window.CRVL_CATEGORY_TAGS.map((c) => `
+      <label>
+        <input type="checkbox" value="${c.slug}" ${sel.includes(c.slug) ? 'checked' : ''}>
+        ${esc(c.label)}
+      </label>`).join('');
+  }
+
+  function getSelectedCategoryTags() {
+    return Array.from(document.querySelectorAll('#categoryTags input:checked')).map((el) => el.value);
   }
 
   function renderImagePreview() {
@@ -59,7 +73,7 @@
     document.getElementById('p-id').value = product ? product.id : '';
     document.getElementById('p-name').value = product ? product.name : '';
     document.getElementById('p-description').value = product ? (product.description || '') : '';
-    document.getElementById('p-category').innerHTML = '<option value="">Sem categoria</option>' + categoryOptionsHtml(product ? product.category_id : '');
+    renderCategoryTagCheckboxes(product ? product.category_tags : []);
     document.getElementById('p-brand').value = product ? product.brand || '' : '';
     document.getElementById('p-price').value = product ? product.price : '';
     document.getElementById('p-promo').value = product && product.promo_price != null ? product.promo_price : '';
@@ -94,13 +108,13 @@
       return;
     }
     body.innerHTML = list.map((p) => {
-      const cat = categories.find((c) => c.id === p.category_id);
+      const catLabel = (p.category_tags || []).map(categoryTagLabel).join(', ');
       const img = p.images && p.images[0] ? p.images[0] : '../assets/product-tenis.jpg';
       return `
         <tr>
           <td><img class="thumb" src="${img}" alt=""></td>
           <td>${esc(p.name)}${p.featured ? ' ⭐' : ''}</td>
-          <td>${cat ? esc(cat.name) : '—'}</td>
+          <td>${catLabel ? esc(catLabel) : '—'}</td>
           <td>${money(p.promo_price != null ? p.promo_price : p.price)}${p.promo_price != null ? ` <span style="color:var(--grey); text-decoration:line-through; font-size:0.78rem;">${money(p.price)}</span>` : ''}</td>
           <td>
             <input type="number" min="0" value="${p.stock}" data-stock="${p.id}" style="width:64px; background:var(--black-2); border:1px solid var(--line); color:var(--white-warm); padding:6px 8px; border-radius:2px;">
@@ -134,12 +148,8 @@
 
   async function load() {
     try {
-      const [prodData, catData] = await Promise.all([
-        window.CrvlApi.get('/admin/products'),
-        window.CrvlApi.get('/categories'),
-      ]);
+      const prodData = await window.CrvlApi.get('/admin/products');
       products = prodData.products;
-      categories = catData.categories;
       renderRows();
     } catch (err) {
       window.CrvlAdmin.toast(err.message, true);
@@ -174,7 +184,7 @@
       const payload = {
         name: document.getElementById('p-name').value.trim(),
         description: document.getElementById('p-description').value.trim(),
-        category_id: document.getElementById('p-category').value || null,
+        category_tags: getSelectedCategoryTags(),
         brand: document.getElementById('p-brand').value.trim(),
         price: Number(document.getElementById('p-price').value),
         promo_price: document.getElementById('p-promo').value === '' ? null : Number(document.getElementById('p-promo').value),

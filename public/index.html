@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CRVL Store | Tênis selecionados</title>
 <meta name="description" content="CRVL Store. Tênis em alta, direto no WhatsApp e no Instagram.">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#0a0806">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -40,12 +40,24 @@
 </head>
 <body>
 
+<!-- ============ ANNOUNCEMENT BAR ============ -->
+<div class="announce-bar" aria-hidden="true">
+  <div class="announce-track">
+    <span>ENVIO PARA TODO O BRASIL</span><span>●</span>
+    <span>ATENDIMENTO DIRETO NO WHATSAPP</span><span>●</span>
+    <span>SELEÇÃO PRÓPRIA, TODA SEMANA</span><span>●</span>
+    <span>ENVIO PARA TODO O BRASIL</span><span>●</span>
+    <span>ATENDIMENTO DIRETO NO WHATSAPP</span><span>●</span>
+    <span>SELEÇÃO PRÓPRIA, TODA SEMANA</span><span>●</span>
+  </div>
+</div>
+
 <!-- ============ HEADER ============ -->
 <header class="site-header" id="header">
   <div class="header-inner">
+    <img class="mascot-icon" src="assets/mascot.png" alt="" aria-hidden="true">
     <a href="#top" class="logo" aria-label="CRVL Store, início">
-      <img class="logo-mark" src="assets/logo-icon.png" alt="CRVL Store">
-      <span class="logo-word">CRVL <em>Store</em></span>
+      <img class="logo-full" src="assets/logo-full.png" alt="CRVL Store">
     </a>
 
     <nav class="nav-desktop" aria-label="Navegação principal">
@@ -80,35 +92,29 @@
 
 <main id="top">
 
-  <!-- ============ HERO ============ -->
-  <section class="hero" id="hero">
-    <div class="hero-bg" aria-hidden="true">
-      <video class="hero-video" autoplay muted loop playsinline poster="assets/hero-poster.jpg">
-        <source src="assets/hero-bg.mp4" type="video/mp4">
-      </video>
-      <div class="hero-texture"></div>
-      <div class="hero-glow"></div>
+  <!-- ============ HERO / BANNER PRINCIPAL ============ -->
+  <section class="promo-hero" id="hero">
+    <div class="promo-hero-media" aria-hidden="true">
+      <img src="assets/logo-banner.png" alt="">
+      <div class="promo-hero-overlay"></div>
     </div>
-
-    <div class="hero-content">
-      <p class="hero-eyebrow reveal">Loja virtual · Direto no WhatsApp</p>
+    <div class="promo-hero-content">
+      <p class="hero-eyebrow reveal" style="--d:0">Loja virtual · Direto no WhatsApp</p>
       <h1 class="hero-title">
-        <span class="reveal" style="--d:0">AS MELHORES</span>
-        <span class="reveal" style="--d:1">MARCAS</span>
-        <span class="reveal hero-gold" style="--d:2">EM UM SÓ LUGAR.</span>
+        <span class="reveal" style="--d:1">AS MELHORES</span>
+        <span class="reveal" style="--d:2">MARCAS</span>
+        <span class="reveal hero-gold" style="--d:3">EM UM SÓ LUGAR.</span>
       </h1>
-      <p class="hero-sub reveal" style="--d:3">
+      <p class="hero-sub reveal" style="--d:4">
         Tênis em alta, escolhidos com cuidado. Fala com a gente pelo WhatsApp.
       </p>
-      <div class="hero-actions reveal" style="--d:4">
+      <div class="hero-actions reveal" style="--d:5">
         <a class="btn btn-gold" href="https://wa.me/5511982291198?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20CRVL%20Store%20e%20gostaria%20de%20saber%20mais%20sobre%20os%20produtos%20dispon%C3%ADveis." target="_blank" rel="noopener">
           Comprar pelo WhatsApp
         </a>
         <a class="btn btn-ghost" href="#produtos">Ver produtos</a>
       </div>
     </div>
-
-    <a href="#produtos" class="scroll-cue" aria-hidden="true"><span></span></a>
   </section>
 
   <!-- ============ MARQUEE STRIP ============ -->
@@ -125,45 +131,50 @@
     </div>
   </div>
 
-  <!-- ============ CATEGORIAS ============ -->
-  <section class="section categories" id="categorias">
+  <!-- ============ ESCOLHA SEU MODELO ============ -->
+  <section class="section model-select" id="categorias">
     <div class="section-head">
-      <p class="eyebrow reveal-scroll">O que você encontra</p>
-      <h2 class="reveal-scroll">Categorias</h2>
+      <p class="eyebrow reveal-scroll">Escolha seu modelo</p>
+      <h2 class="reveal-scroll">O que você procura?</h2>
+      <p class="section-note reveal-scroll">Toque numa categoria e vá direto pro catálogo já filtrado.</p>
     </div>
-    <div class="cat-grid">
-      <div class="cat-card reveal-scroll">
-        <div class="cat-icon">◆</div>
-        <h3>Camisas</h3>
-      </div>
-      <div class="cat-card reveal-scroll">
-        <div class="cat-icon">◆</div>
-        <h3>Polos</h3>
-      </div>
-      <div class="cat-card reveal-scroll">
-        <div class="cat-icon">◆</div>
-        <h3>Tênis</h3>
-      </div>
-      <div class="cat-card reveal-scroll">
-        <div class="cat-icon">◆</div>
-        <h3>Calçados</h3>
-      </div>
-      <div class="cat-card reveal-scroll">
-        <div class="cat-icon">◆</div>
-        <h3>Streetwear</h3>
-      </div>
-      <div class="cat-card reveal-scroll">
-        <div class="cat-icon">◆</div>
-        <h3>Moda Casual</h3>
+    <div class="model-row reveal-scroll">
+      <a class="model-item" href="catalogo.html?categoria=tenis">
+        <span class="model-thumb"><img src="assets/product-tenis.jpg" alt="Tênis" loading="lazy"></span>
+        <span class="model-label">Tênis</span>
+      </a>
+      <a class="model-item" href="catalogo.html?categorias=camisas,shorts">
+        <span class="model-thumb"><img src="assets/product-conjunto.jpg" alt="Conjuntos" loading="lazy"></span>
+        <span class="model-label">Conjuntos</span>
+      </a>
+      <a class="model-item" href="catalogo.html?categoria=sapatos">
+        <span class="model-thumb"><img src="assets/product-acessorio.jpg" alt="Calçados" loading="lazy"></span>
+        <span class="model-label">Calçados</span>
+      </a>
+      <a class="model-item" href="catalogo.html?categoria=camisas">
+        <span class="model-thumb"><img src="assets/product-polo.jpg" alt="Camisetas" loading="lazy"></span>
+        <span class="model-label">Camisetas</span>
+      </a>
+    </div>
+    <div class="highlight-row reveal-scroll" id="highlightRow" aria-label="Destaques da CRVL Store">
+      <div class="highlight-track">
+        <div class="highlight-item"><img src="assets/highlight-01.jpg" alt="Destaque 1" loading="lazy"></div>
+        <div class="highlight-item"><img src="assets/highlight-02.jpg" alt="Destaque 2" loading="lazy"></div>
+        <div class="highlight-item"><img src="assets/highlight-03.jpg" alt="Destaque 3" loading="lazy"></div>
+        <div class="highlight-item"><img src="assets/highlight-04.jpg" alt="Destaque 4" loading="lazy"></div>
+        <div class="highlight-item" aria-hidden="true"><img src="assets/highlight-01.jpg" alt="" loading="lazy"></div>
+        <div class="highlight-item" aria-hidden="true"><img src="assets/highlight-02.jpg" alt="" loading="lazy"></div>
+        <div class="highlight-item" aria-hidden="true"><img src="assets/highlight-03.jpg" alt="" loading="lazy"></div>
+        <div class="highlight-item" aria-hidden="true"><img src="assets/highlight-04.jpg" alt="" loading="lazy"></div>
       </div>
     </div>
   </section>
 
-  <!-- ============ DESTAQUES / PRODUTOS ============ -->
+  <!-- ============ + VENDIDOS ============ -->
   <section class="section products" id="produtos">
     <div class="section-head">
       <p class="eyebrow reveal-scroll">Nossos produtos</p>
-      <h2 class="reveal-scroll">Destaques</h2>
+      <h2 class="reveal-scroll">+ Vendidos</h2>
       <p class="section-note reveal-scroll">Alguns produtos já com fotos reais. O restante do catálogo chega em breve.</p>
     </div>
 
@@ -222,6 +233,118 @@
     </div>
   </section>
 
+  <!-- ============ DESTAQUE DA SEMANA ============ -->
+  <section class="section spotlight" id="destaque-semana">
+    <div class="section-head">
+      <p class="eyebrow reveal-scroll">Destaque da semana</p>
+      <h2 class="reveal-scroll">Adidas Grand Court</h2>
+    </div>
+    <div class="spotlight-card reveal-scroll">
+      <div class="spotlight-media"><img src="assets/product-tenis.jpg" alt="Adidas Grand Court branco e azul à venda na CRVL Store" loading="lazy"></div>
+      <div class="spotlight-info">
+        <span class="product-cat">Tênis</span>
+        <h3>Um clássico que não sai de moda</h3>
+        <p>Combina com qualquer produção, do casual ao esportivo. Poucas unidades por vez — fala com a gente antes que acabe.</p>
+        <div class="spotlight-actions">
+          <a class="btn btn-gold" href="https://wa.me/5511982291198?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20CRVL%20Store%20e%20tenho%20interesse%20no%20Adidas%20Grand%20Court.%20Pode%20me%20passar%20mais%20informa%C3%A7%C3%B5es%3F" target="_blank" rel="noopener">Comprar pelo WhatsApp</a>
+          <a class="btn btn-ghost" href="https://www.instagram.com/_crvlstore/" target="_blank" rel="noopener">Ver no Instagram</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NOSSOS CLIENTES / FEEDBACKS ============ -->
+  <section class="section feedbacks" id="feedbacks">
+    <div class="section-head">
+      <p class="eyebrow reveal-scroll">Nossos clientes</p>
+      <h2 class="reveal-scroll">Quem comprou, aprovou</h2>
+      <p class="section-note reveal-scroll">Prints reais de clientes recebendo os pedidos, direto do WhatsApp e do Instagram.</p>
+    </div>
+    <div class="feedback-scroll reveal-scroll">
+      <div class="feedback-card"><img src="assets/feedbacks/feedback-01.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
+      <div class="feedback-card"><img src="assets/feedbacks/feedback-02.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
+      <div class="feedback-card"><img src="assets/feedbacks/feedback-03.jpg" alt="Print de feedback de cliente no Instagram" loading="lazy"></div>
+      <div class="feedback-card"><img src="assets/feedbacks/feedback-04.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
+      <div class="feedback-card"><img src="assets/feedbacks/feedback-05.jpg" alt="Print de feedback de cliente no Instagram" loading="lazy"></div>
+      <div class="feedback-card"><img src="assets/feedbacks/feedback-06.jpg" alt="Print de feedback de cliente no Instagram" loading="lazy"></div>
+      <div class="feedback-card"><img src="assets/feedbacks/feedback-07.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
+      <div class="feedback-card"><img src="assets/feedbacks/feedback-08.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
+      <div class="feedback-card"><img src="assets/feedbacks/feedback-09.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
+      <div class="feedback-card"><img src="assets/feedbacks/feedback-10.jpg" alt="Print de feedback de cliente no Instagram" loading="lazy"></div>
+    </div>
+    <p class="feedback-hint reveal-scroll">← arraste para o lado para ver mais →</p>
+  </section>
+
+  <!-- ============ GRUPO: TÊNIS ============ -->
+  <section class="section product-group" id="grupo-tenis">
+    <div class="section-head">
+      <p class="eyebrow reveal-scroll">Categoria</p>
+      <h2 class="reveal-scroll">Tênis</h2>
+    </div>
+    <div class="product-grid product-grid-2">
+      <article class="product-card reveal-scroll">
+        <div class="product-media"><img src="assets/product-tenis.jpg" alt="Adidas Grand Court branco e azul à venda na CRVL Store" loading="lazy"></div>
+        <div class="product-info">
+          <span class="product-cat">Tênis</span>
+          <h3>Adidas Grand Court</h3>
+          <div class="product-actions">
+            <a href="https://www.instagram.com/_crvlstore/" target="_blank" rel="noopener" class="link-mini">Ver no Instagram</a>
+            <a href="https://wa.me/5511982291198?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20CRVL%20Store%20e%20tenho%20interesse%20no%20Adidas%20Grand%20Court.%20Pode%20me%20passar%20mais%20informa%C3%A7%C3%B5es%3F" target="_blank" rel="noopener" class="link-mini gold">Comprar pelo WhatsApp</a>
+          </div>
+        </div>
+      </article>
+      <article class="product-card reveal-scroll">
+        <div class="product-media"><img src="assets/product-acessorio.jpg" alt="Tommy Hilfiger cinza à venda na CRVL Store" loading="lazy"></div>
+        <div class="product-info">
+          <span class="product-cat">Calçados</span>
+          <h3>Tommy Hilfiger Cinza</h3>
+          <div class="product-actions">
+            <a href="https://www.instagram.com/_crvlstore/" target="_blank" rel="noopener" class="link-mini">Ver no Instagram</a>
+            <a href="https://wa.me/5511982291198?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20CRVL%20Store%20e%20tenho%20interesse%20no%20Tommy%20Hilfiger%20Cinza.%20Pode%20me%20passar%20mais%20informa%C3%A7%C3%B5es%3F" target="_blank" rel="noopener" class="link-mini gold">Comprar pelo WhatsApp</a>
+          </div>
+        </div>
+      </article>
+    </div>
+    <div style="text-align:center; margin-top:40px;">
+      <a href="catalogo.html?categoria=tenis" class="btn btn-outline">Ver mais</a>
+    </div>
+  </section>
+
+  <!-- ============ GRUPO: VESTUÁRIO ============ -->
+  <section class="section product-group" id="grupo-vestuario">
+    <div class="section-head">
+      <p class="eyebrow reveal-scroll">Categoria</p>
+      <h2 class="reveal-scroll">Vestuário</h2>
+    </div>
+    <div class="product-grid product-grid-2">
+      <article class="product-card reveal-scroll">
+        <div class="product-media"><img src="assets/product-conjunto.jpg" alt="Conjunto Jordan Jumpman camiseta e bermuda à venda na CRVL Store" loading="lazy"></div>
+        <div class="product-info">
+          <span class="product-cat">Conjuntos</span>
+          <h3>Conjunto Jordan Jumpman</h3>
+          <div class="product-actions">
+            <a href="https://www.instagram.com/_crvlstore/" target="_blank" rel="noopener" class="link-mini">Ver no Instagram</a>
+            <a href="https://wa.me/5511982291198?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20CRVL%20Store%20e%20tenho%20interesse%20no%20Conjunto%20Jordan%20Jumpman.%20Pode%20me%20passar%20mais%20informa%C3%A7%C3%B5es%3F" target="_blank" rel="noopener" class="link-mini gold">Comprar pelo WhatsApp</a>
+          </div>
+        </div>
+      </article>
+      <article class="product-card reveal-scroll">
+        <div class="product-media"><img src="assets/product-polo.jpg" alt="Camiseta Nike I Ball Hard preta à venda na CRVL Store" loading="lazy"></div>
+        <div class="product-info">
+          <span class="product-cat">Camisetas</span>
+          <h3>Camiseta Nike Ball Hard</h3>
+          <div class="product-actions">
+            <a href="https://www.instagram.com/_crvlstore/" target="_blank" rel="noopener" class="link-mini">Ver no Instagram</a>
+            <a href="https://wa.me/5511982291198?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20CRVL%20Store%20e%20tenho%20interesse%20na%20Camiseta%20Nike%20Ball%20Hard.%20Pode%20me%20passar%20mais%20informa%C3%A7%C3%B5es%3F" target="_blank" rel="noopener" class="link-mini gold">Comprar pelo WhatsApp</a>
+          </div>
+        </div>
+      </article>
+    </div>
+    <div style="text-align:center; margin-top:40px;">
+      <a href="catalogo.html?categoria=camisas" class="btn btn-outline">Ver mais</a>
+    </div>
+  </section>
+
   <!-- ============ SOBRE ============ -->
   <section class="section about" id="sobre">
     <div class="about-media reveal-scroll" aria-hidden="true">
@@ -230,16 +353,17 @@
       </div>
     </div>
     <div class="about-text">
-      <p class="eyebrow reveal-scroll">Sobre a loja</p>
-      <h2 class="reveal-scroll">Tênis que combinam com seu estilo</h2>
+      <p class="eyebrow reveal-scroll">Quem é a CRVL</p>
+      <h2 class="reveal-scroll">Rua, atitude e um tênis bom de verdade</h2>
       <p class="reveal-scroll">
-        A CRVL Store traz os tênis que estão em alta e que fazem parte do estilo streetwear.
-        Aqui você encontra modelos para diferentes estilos e ocasiões, sempre buscando trazer opções que realmente valem a pena.
+        A CRVL Store nasceu pra quem curte tênis de verdade e não abre mão de estar por dentro do que está em alta.
+        Cada modelo passa pela nossa curadoria antes de chegar até você.
       </p>
       <p class="reveal-scroll">
-        Gostou de algum modelo? Chama a gente pelo WhatsApp ou Instagram. A gente te passa mais informações e ajuda você a escolher o seu.
+        Sem loja física, sem complicação: você fala direto com a gente pelo WhatsApp ou Instagram, tira suas dúvidas
+        e fecha o pedido no seu tempo.
       </p>
-      <p class="reveal-scroll">Seu estilo começa nos detalhes.</p>
+      <p class="reveal-scroll">Tênis é identidade. A gente ajuda você a achar o seu.</p>
       <a class="btn btn-outline reveal-scroll" href="https://www.instagram.com/_crvlstore/" target="_blank" rel="noopener">Conheça nosso Instagram</a>
     </div>
   </section>
@@ -259,28 +383,6 @@
       <div class="gallery-item reveal-scroll"><img src="assets/gallery-5.jpg" alt="Jaquetas Puma Motorsport na CRVL Store" loading="lazy"></div>
       <div class="gallery-item reveal-scroll"><img src="assets/gallery-6.jpg" alt="Adidas Grand Court azul marinho na CRVL Store" loading="lazy"></div>
     </div>
-  </section>
-
-  <!-- ============ FEEDBACKS ============ -->
-  <section class="section feedbacks" id="feedbacks">
-    <div class="section-head">
-      <p class="eyebrow reveal-scroll">Feedback dos clientes</p>
-      <h2 class="reveal-scroll">Quem comprou, aprovou</h2>
-      <p class="section-note reveal-scroll">Prints reais de clientes recebendo os pedidos, direto do WhatsApp e do Instagram.</p>
-    </div>
-    <div class="feedback-scroll reveal-scroll">
-      <div class="feedback-card"><img src="assets/feedbacks/feedback-01.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
-      <div class="feedback-card"><img src="assets/feedbacks/feedback-02.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
-      <div class="feedback-card"><img src="assets/feedbacks/feedback-03.jpg" alt="Print de feedback de cliente no Instagram" loading="lazy"></div>
-      <div class="feedback-card"><img src="assets/feedbacks/feedback-04.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
-      <div class="feedback-card"><img src="assets/feedbacks/feedback-05.jpg" alt="Print de feedback de cliente no Instagram" loading="lazy"></div>
-      <div class="feedback-card"><img src="assets/feedbacks/feedback-06.jpg" alt="Print de feedback de cliente no Instagram" loading="lazy"></div>
-      <div class="feedback-card"><img src="assets/feedbacks/feedback-07.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
-      <div class="feedback-card"><img src="assets/feedbacks/feedback-08.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
-      <div class="feedback-card"><img src="assets/feedbacks/feedback-09.jpg" alt="Print de feedback de cliente no WhatsApp" loading="lazy"></div>
-      <div class="feedback-card"><img src="assets/feedbacks/feedback-10.jpg" alt="Print de feedback de cliente no Instagram" loading="lazy"></div>
-    </div>
-    <p class="feedback-hint reveal-scroll">← arraste para o lado para ver mais →</p>
   </section>
 
   <!-- ============ INSTAGRAM ============ -->
@@ -310,6 +412,40 @@
     </div>
   </section>
 
+  <!-- ============ FALE COM A GENTE ============ -->
+  <section class="section quickmsg" id="fale-conosco">
+    <div class="quickmsg-inner reveal-scroll">
+      <p class="eyebrow">Fala com a gente</p>
+      <h2>Me conta o que você procura</h2>
+      <p class="section-note">Escreve o modelo, a cor ou o tamanho e a gente já abre o WhatsApp com a mensagem pronta.</p>
+      <form class="quickmsg-form" id="quickMsgForm">
+        <label class="sr-only" for="quickMsgInput">O que você procura</label>
+        <input type="text" id="quickMsgInput" name="mensagem" placeholder="Ex.: Air Max 95 tamanho 42" autocomplete="off" required>
+        <button type="submit" class="btn btn-gold">Enviar no WhatsApp</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ ATENDIMENTO ============ -->
+  <section class="section contact" id="atendimento">
+    <div class="section-head">
+      <p class="eyebrow reveal-scroll">Central de atendimento</p>
+      <h2 class="reveal-scroll">Fala com a gente</h2>
+    </div>
+    <div class="contact-grid">
+      <a class="contact-card reveal-scroll" href="https://wa.me/5511982291198?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20CRVL%20Store%20e%20gostaria%20de%20falar%20com%20a%20equipe." target="_blank" rel="noopener">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2m0 1.67c2.2 0 4.27.86 5.82 2.42a8.23 8.23 0 0 1 2.42 5.82c0 4.54-3.7 8.23-8.25 8.23a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.13.82.84-3.05-.2-.31a8.18 8.18 0 0 1-1.26-4.37c0-4.55 3.7-8.23 8.25-8.23m-4.53 4.7c-.16 0-.43.06-.66.31-.22.25-.86.84-.86 2.05 0 1.21.88 2.38 1 2.55.13.16 1.73 2.76 4.28 3.76 2.12.84 2.55.67 3 .63.46-.04 1.49-.6 1.7-1.19.21-.58.21-1.08.15-1.19-.06-.1-.23-.16-.48-.29-.25-.13-1.49-.74-1.72-.82-.23-.09-.4-.13-.56.13-.16.25-.64.82-.79.98-.14.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.24-.74-.66-1.24-1.48-1.38-1.73-.15-.25-.02-.38.11-.51.11-.11.25-.29.37-.44.12-.15.16-.25.24-.42.08-.16.04-.31-.02-.44-.06-.13-.56-1.39-.78-1.9-.2-.5-.41-.43-.56-.44Z"/></svg>
+        <h3>WhatsApp</h3>
+        <p>Resposta rápida, direto com a equipe.</p>
+      </a>
+      <a class="contact-card reveal-scroll" href="https://www.instagram.com/_crvlstore/" target="_blank" rel="noopener">
+        <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+        <h3>Instagram</h3>
+        <p>@_crvlstore — lançamentos e bastidores.</p>
+      </a>
+    </div>
+  </section>
+
 </main>
 
 <!-- ============ FOOTER ============ -->
@@ -328,6 +464,14 @@
     </nav>
     <div class="footer-address">
       <p>Loja virtual · Atendimento pelo WhatsApp e Instagram</p>
+      <div class="footer-socials">
+        <a href="https://www.instagram.com/_crvlstore/" target="_blank" rel="noopener" aria-label="Instagram da CRVL Store" class="social-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+        </a>
+        <a href="https://wa.me/5511982291198" target="_blank" rel="noopener" aria-label="WhatsApp da CRVL Store" class="social-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2m0 1.67c2.2 0 4.27.86 5.82 2.42a8.23 8.23 0 0 1 2.42 5.82c0 4.54-3.7 8.23-8.25 8.23a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.13.82.84-3.05-.2-.31a8.18 8.18 0 0 1-1.26-4.37c0-4.55 3.7-8.23 8.25-8.23m-4.53 4.7c-.16 0-.43.06-.66.31-.22.25-.86.84-.86 2.05 0 1.21.88 2.38 1 2.55.13.16 1.73 2.76 4.28 3.76 2.12.84 2.55.67 3 .63.46-.04 1.49-.6 1.7-1.19.21-.58.21-1.08.15-1.19-.06-.1-.23-.16-.48-.29-.25-.13-1.49-.74-1.72-.82-.23-.09-.4-.13-.56.13-.16.25-.64.82-.79.98-.14.17-.29.19-.54.06-.25-.13-1.05-.39-2-1.24-.74-.66-1.24-1.48-1.38-1.73-.15-.25-.02-.38.11-.51.11-.11.25-.29.37-.44.12-.15.16-.25.24-.42.08-.16.04-.31-.02-.44-.06-.13-.56-1.39-.78-1.9-.2-.5-.41-.43-.56-.44Z"/></svg>
+        </a>
+      </div>
       <p class="copyright">© <span id="year"></span> CRVL Store. Todos os direitos reservados. · <a href="admin/" style="color:inherit; text-decoration:underline; opacity:0.55;">Admin</a></p>
     </div>
   </div>
@@ -342,5 +486,6 @@
 </a>
 
 <script src="assets/script.js"></script>
+<script src="js/analytics-track.js" defer></script>
 </body>
 </html>

@@ -24,6 +24,7 @@
       <a href="index.html">Dashboard</a>
       <a href="produtos.html" class="active">Produtos</a>
       <a href="categorias.html">Categorias</a>
+      <a href="analytics.html">Análise de usuários</a>
       <a href="#" id="logoutBtn">Sair</a>
     </nav>
   </aside>
@@ -66,9 +67,9 @@
           <label for="p-description">Descrição</label>
           <textarea id="p-description"></textarea>
         </div>
-        <div class="form-field">
-          <label for="p-category">Categoria</label>
-          <select id="p-category"><option value="">Sem categoria</option></select>
+        <div class="form-field full">
+          <label>Categorias</label>
+          <div class="category-tags" id="categoryTags"></div>
         </div>
         <div class="form-field">
           <label for="p-brand">Marca</label>
@@ -135,6 +136,7 @@
 
 <script src="../js/api.js"></script>
 <script src="../js/admin-common.js"></script>
+<script src="../js/category-tags.js"></script>
 <script src="../js/admin-produtos.js"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
 
   const state = {
     q: '',
-    category: '',
+    categories: [],
     brand: '',
     minPrice: '',
     maxPrice: '',
@@ -18,9 +18,10 @@
     page: 1,
   };
 
-  let categories = [];
   let brands = [];
   let searchTimer = null;
+  let lastTrackedQuery = null;
+  let lastTrackedCategories = '';
 
   const grid = document.getElementById('productsGrid');
   const resultCount = document.getElementById('resultCount');
@@ -33,7 +34,7 @@
 
   function activeFilterCount() {
     let n = 0;
-    if (state.category) n++;
+    if (state.categories.length) n++;
     if (state.brand) n++;
     if (state.minPrice || state.maxPrice) n++;
     if (state.size) n++;
@@ -44,8 +45,8 @@
   }
 
   function filtersHtml() {
-    const catOptions = categories
-      .map((c) => `<label class="filter-option"><input type="radio" name="fp-category" value="${c.slug}" ${state.category === c.slug ? 'checked' : ''}> ${c.name}</label>`)
+    const catOptions = window.CRVL_CATEGORY_TAGS
+      .map((c) => `<label class="filter-option"><input type="checkbox" class="fp-category-check" value="${c.slug}" ${state.categories.includes(c.slug) ? 'checked' : ''}> ${c.label}</label>`)
       .join('');
     const brandOptions = brands
       .map((b) => `<label class="filter-option"><input type="radio" name="fp-brand" value="${b}" ${state.brand === b ? 'checked' : ''}> ${b}</label>`)
@@ -59,8 +60,7 @@
 
     return `
       <div class="filter-group">
-        <h4>Categoria</h4>
-        <label class="filter-option"><input type="radio" name="fp-category" value="" ${state.category === '' ? 'checked' : ''}> Todas</label>
+        <h4>Categorias</h4>
         ${catOptions}
       </div>
       ${brands.length ? `<div class="filter-group"><h4>Marca</h4><label class="filter-option"><input type="radio" name="fp-brand" value="" ${state.brand === '' ? 'checked' : ''}> Todas</label>${brandOptions}</div>` : ''}
@@ -100,7 +100,17 @@
         if (autoApply) renderFilters(), load();
       });
     });
-    container.querySelectorAll('input[type=checkbox]').forEach((el) => {
+    container.querySelectorAll('input.fp-category-check').forEach((el) => {
+      el.addEventListener('change', () => {
+        const set = new Set(state.categories);
+        if (el.checked) set.add(el.value);
+        else set.delete(el.value);
+        state.categories = Array.from(set);
+        state.page = 1;
+        if (autoApply) renderFilters(), load();
+      });
+    });
+    container.querySelectorAll('input[type=checkbox]:not(.fp-category-check)').forEach((el) => {
       el.addEventListener('change', () => {
         const key = el.name.replace('fp-', '');
         state[key] = el.checked;
@@ -119,7 +129,7 @@
     const clearBtn = container.querySelector('#fp-clear');
     if (clearBtn) {
       clearBtn.addEventListener('click', () => {
-        Object.assign(state, { category: '', brand: '', minPrice: '', maxPrice: '', size: '', color: '', inStock: false, promo: false, page: 1 });
+        Object.assign(state, { categories: [], brand: '', minPrice: '', maxPrice: '', size: '', color: '', inStock: false, promo: false, page: 1 });
         renderFilters();
         load();
       });
@@ -143,10 +153,13 @@
     const img = p.images && p.images[0] ? p.images[0] : 'assets/product-tenis.jpg';
     const hasPromo = p.promo_price != null;
     const outOfStock = Number(p.stock) <= 0;
-    const catName = (categories.find((c) => c.id === p.category_id) || {}).name || '';
+    const catName = (p.category_tags || [])
+      .map((slug) => (window.CRVL_CATEGORY_TAGS.find((c) => c.slug === slug) || {}).label)
+      .filter(Boolean)
+      .join(', ');
     const waMsg = encodeURIComponent(`Olá! Vim pelo catálogo da CRVL Store e tenho interesse no produto "${p.name}". Pode me passar mais informações?`);
     return `
-      <article class="product-card reveal-scroll in-view">
+      <article class="product-card reveal-scroll in-view" data-product-id="${p.id}">
         ${hasPromo ? '<span class="badge">Promoção</span>' : outOfStock ? '<span class="badge badge-out">Esgotado</span>' : ''}
         <a href="/produto.html?slug=${encodeURIComponent(p.slug)}" class="product-media" style="display:block;">
           <img src="${img}" alt="${p.name}" loading="lazy">
@@ -199,7 +212,7 @@
     resultCount.textContent = 'Carregando...';
     const params = new URLSearchParams();
     if (state.q) params.set('q', state.q);
-    if (state.category) params.set('category', state.category);
+    if (state.categories.length) params.set('categories', state.categories.join(','));
     if (state.brand) params.set('brand', state.brand);
     if (state.minPrice) params.set('minPrice', state.minPrice);
     if (state.maxPrice) params.set('maxPrice', state.maxPrice);
@@ -218,6 +231,18 @@
         grid.dataset.brandsBound = '1';
         renderFilters();
       }
+      if (window.CrvlAnalytics) {
+        if (state.q && state.q !== lastTrackedQuery) {
+          lastTrackedQuery = state.q;
+          window.CrvlAnalytics.trackSearch(state.q, data.total);
+        }
+        const catsKey = state.categories.slice().sort().join(',');
+        if (catsKey && catsKey !== lastTrackedCategories) {
+          lastTrackedCategories = catsKey;
+          window.CrvlAnalytics.trackCategoryView(state.categories);
+        }
+      }
+
       if (!data.products.length) {
         grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Nenhum produto encontrado com esses filtros.<br>Tente ajustar a busca ou limpar os filtros.</div>';
         resultCount.textContent = 'Nenhum resultado';
@@ -257,8 +282,9 @@
     backdrop.addEventListener('click', closeModal);
     document.getElementById('applyFilters').addEventListener('click', () => {
       // Sincroniza os valores do modal (que não auto-aplica) para o state e recarrega.
-      const mobileInputs = document.getElementById('filtersModalBody').querySelectorAll('input');
-      mobileInputs.forEach((el) => {
+      const modalBody = document.getElementById('filtersModalBody');
+      state.categories = Array.from(modalBody.querySelectorAll('input.fp-category-check:checked')).map((el) => el.value);
+      modalBody.querySelectorAll('input:not(.fp-category-check)').forEach((el) => {
         const key = el.name.replace('fp-', '');
         if (el.type === 'radio') { if (el.checked) state[key] = el.value; }
         else if (el.type === 'checkbox') state[key] = el.checked;
@@ -270,16 +296,14 @@
       load();
     });
 
-    try {
-      const catData = await window.CrvlApi.get('/categories');
-      categories = catData.categories || [];
-    } catch (e) {
-      categories = [];
-    }
-
-    // Pré-preenche filtro de categoria via ?categoria=slug na URL, se vier de algum link.
+    // Pré-preenche filtro de categorias via ?categorias=slug1,slug2 na URL, se vier de algum link.
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('categoria')) state.category = urlParams.get('categoria');
+    const validSlugs = new Set(window.CRVL_CATEGORY_TAGS.map((c) => c.slug));
+    if (urlParams.get('categorias')) {
+      state.categories = urlParams.get('categorias').split(',').map((s) => s.trim()).filter((s) => validSlugs.has(s));
+    } else if (urlParams.get('categoria') && validSlugs.has(urlParams.get('categoria'))) {
+      state.categories = [urlParams.get('categoria')];
+    }
     if (urlParams.get('q')) { state.q = urlParams.get('q'); document.getElementById('searchInput').value = state.q; }
 
     renderFilters();

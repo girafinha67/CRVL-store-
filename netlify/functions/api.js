@@ -12,6 +12,8 @@ const productRoutes = require('./routes/products.routes');
 const categoryRoutes = require('./routes/categories.routes');
 const uploadRoutes = require('./routes/uploads.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
+const trackRoutes = require('./routes/track.routes');
+const analyticsRoutes = require('./routes/analytics.routes');
 
 const app = express();
 
@@ -56,6 +58,8 @@ apiRouter.use(productRoutes);
 apiRouter.use(categoryRoutes);
 apiRouter.use(uploadRoutes);
 apiRouter.use(dashboardRoutes);
+apiRouter.use(trackRoutes); // POST /track — público, evento de Analytics do visitante
+apiRouter.use(analyticsRoutes); // /admin/analytics/* — protegido pelo requireAuth acima
 apiRouter.use((req, res) => {
   res.status(404).json({ error: 'Rota de API não encontrada.' });
 });

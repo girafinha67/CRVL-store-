@@ -74,13 +74,15 @@
             <div class="pd-chip-row">${colorChips}</div>
           </div>
           <p class="pd-stock ${outOfStock ? 'out' : 'in'}">${outOfStock ? '● Esgotado no momento' : '● Disponível em estoque'}</p>
-          <div class="pd-actions">
+          <div class="pd-actions" data-product-id="${p.id}">
             <a class="btn btn-gold" href="https://wa.me/5511982291198?text=${waMsg}" target="_blank" rel="noopener">Comprar pelo WhatsApp</a>
             <a class="btn btn-ghost" href="/catalogo.html">Voltar ao catálogo</a>
           </div>
         </div>
       </div>
     `;
+
+    if (window.CrvlAnalytics) window.CrvlAnalytics.trackProductView(p, p.category_tags);
 
     document.querySelectorAll('.pd-thumbs img').forEach((thumb) => {
       thumb.addEventListener('click', () => {
@@ -95,12 +97,13 @@
     const slug = new URLSearchParams(window.location.search).get('slug');
     if (!slug) return notFound();
     try {
-      const [productData, catData] = await Promise.all([
-        window.CrvlApi.get(`/products/${encodeURIComponent(slug)}`),
-        window.CrvlApi.get('/categories').catch(() => ({ categories: [] })),
-      ]);
-      const category = (catData.categories || []).find((c) => c.id === productData.product.category_id);
-      render(productData.product, category ? category.name : '');
+      const productData = await window.CrvlApi.get(`/products/${encodeURIComponent(slug)}`);
+      const tags = window.CRVL_CATEGORY_TAGS || [];
+      const categoryName = (productData.product.category_tags || [])
+        .map((slugTag) => (tags.find((c) => c.slug === slugTag) || {}).label)
+        .filter(Boolean)
+        .join(', ');
+      render(productData.product, categoryName);
     } catch (err) {
       notFound();
     }

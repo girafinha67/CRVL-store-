@@ -156,7 +156,72 @@ CREATE TABLE IF NOT EXISTS rate_hits (
   ip TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- ===================== Analytics (visitantes/sessões/eventos) =====================
+-- Visitante anônimo: um UUID gerado e guardado no localStorage do navegador
+-- (nunca dado pessoal). Serve só para diferenciar "novo" de "recorrente".
+CREATE TABLE IF NOT EXISTS analytics_visitors (
+  id TEXT PRIMARY KEY,
+  first_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  sessions_count INTEGER NOT NULL DEFAULT 0
+);
+
+-- Sessão: UUID gerado no sessionStorage do navegador (expira sozinho ao
+-- fechar a aba ou após 30min de inatividade — ver public/js/analytics-track.js).
+-- Guarda o "resumo" da sessão; os eventos individuais ficam em analytics_events.
+CREATE TABLE IF NOT EXISTS analytics_sessions (
+  id TEXT PRIMARY KEY,
+  visitor_id TEXT NOT NULL REFERENCES analytics_visitors(id) ON DELETE CASCADE,
+  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  last_activity_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  is_new_visitor INTEGER NOT NULL DEFAULT 0,
+  entry_page TEXT,
+  last_page TEXT,
+  referrer TEXT,
+  source TEXT,
+  medium TEXT,
+  campaign TEXT,
+  term TEXT,
+  content TEXT,
+  device_type TEXT,
+  browser TEXT,
+  os TEXT,
+  screen_w INTEGER,
+  screen_h INTEGER,
+  country TEXT,
+  region TEXT,
+  city TEXT,
+  page_count INTEGER NOT NULL DEFAULT 0,
+  event_count INTEGER NOT NULL DEFAULT 0
+);
+
+-- Evento individual (page_view, product_view, whatsapp_click, search, etc).
+-- Câmera lenta de tudo que acontece no site — as telas de Analytics leem
+-- daqui via consultas agregadas (nunca varrendo a tabela inteira sem filtro
+-- de data, ver lib/analytics-queries.js).
+CREATE TABLE IF NOT EXISTS analytics_events (
+  id BIGSERIAL PRIMARY KEY,
+  event_name TEXT NOT NULL,
+  session_id TEXT NOT NULL REFERENCES analytics_sessions(id) ON DELETE CASCADE,
+  visitor_id TEXT NOT NULL,
+  page_url TEXT,
+  page_path TEXT,
+  referrer TEXT,
+  product_id INTEGER,
+  product_slug TEXT,
+  category_slugs TEXT NOT NULL DEFAULT '[]',
+  search_term TEXT,
+  search_results INTEGER,
+  meta TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
   `);
+
+  // Categorias fixas (multi-seleção) do produto — ver lib/category-tags.js.
+  // Coluna separada de category_id/categories (sistema antigo, mantido por
+  // compatibilidade mas não usado mais no formulário de produto).
+  await exec(`ALTER TABLE products ADD COLUMN IF NOT EXISTS category_tags TEXT NOT NULL DEFAULT '[]';`);
 
   await exec(`
 CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
@@ -170,6 +235,16 @@ CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
 CREATE INDEX IF NOT EXISTS idx_sessions_admin ON sessions(admin_id);
 CREATE INDEX IF NOT EXISTS idx_logs_created ON logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_rate_hits_lookup ON rate_hits(bucket, ip, created_at);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_visitors_last_seen ON analytics_visitors(last_seen_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_sessions_started ON analytics_sessions(started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_sessions_activity ON analytics_sessions(last_activity_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_sessions_visitor ON analytics_sessions(visitor_id);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_created ON analytics_events(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_name_created ON analytics_events(event_name, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_session ON analytics_events(session_id);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_visitor ON analytics_events(visitor_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_events_product ON analytics_events(product_id, created_at DESC) WHERE product_id IS NOT NULL;
   `);
 }
 
@@ -235,13 +310,46 @@ async function ensureAdmin() {
   console.log(`[crvl] Administrador atualizado para: ${normalizedEmail}`);
 }
 
+// Retenção do Analytics: por padrão guarda ~13 meses (permite comparar
+// "este mês vs mesmo mês ano passado"). Ajustável via env var sem precisar
+// alterar código. Ver README.md, seção de Analytics.
+const ANALYTICS_RETENTION_DAYS = Math.max(
+  30,
+  parseInt(process.env.ANALYTICS_RETENTION_DAYS, 10) || 400
+);
+
 async function pruneOldData() {
   try {
     await exec("DELETE FROM sessions WHERE expires_at < NOW() - INTERVAL '1 day'");
     await exec("DELETE FROM rate_hits WHERE created_at < NOW() - INTERVAL '1 day'");
+    // Eventos/sessões/visitantes de Analytics mais antigos que a retenção
+    // configurada. Eventos referenciam sessões com ON DELETE CASCADE, então
+    // apagar a sessão já leva os eventos junto; visitantes só são removidos
+    // quando não sobra nenhuma sessão recente (evita perder o "primeiro
+    // acesso" de alguém que voltou a visitar recentemente).
+    await exec(
+      `DELETE FROM analytics_sessions WHERE started_at < NOW() - INTERVAL '${ANALYTICS_RETENTION_DAYS} days'`
+    );
+    await exec(
+      `DELETE FROM analytics_visitors WHERE last_seen_at < NOW() - INTERVAL '${ANALYTICS_RETENTION_DAYS} days'`
+    );
   } catch (err) {
     console.warn('[crvl] Falha ao limpar dados antigos (não crítico):', err.message);
   }
+}
+
+// ---------- settings (key/value genérico — usado pelo toggle de Analytics) ----------
+async function getSetting(key, fallback = null) {
+  const row = await get('SELECT value FROM settings WHERE key = ?', [key]);
+  return row ? row.value : fallback;
+}
+
+async function setSetting(key, value) {
+  await run(
+    `INSERT INTO settings (key, value) VALUES (?, ?)
+     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+    [key, String(value)]
+  );
 }
 
 function init() {
@@ -258,4 +366,4 @@ function init() {
   return initPromise;
 }
 
-module.exports = { pool, all, get, run, exec, tx, init, pruneOldData };
+module.exports = { pool, all, get, run, exec, tx, init, pruneOldData, getSetting, setSetting, ANALYTICS_RETENTION_DAYS };
