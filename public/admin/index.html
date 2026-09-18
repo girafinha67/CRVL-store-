@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel administrativo | CRVL Store</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../css/catalogo.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-logo">
+      <img src="../assets/logo-icon.png" alt="CRVL Store">
+      <span>CRVL <em style="color:var(--gold-bright); font-style:normal;">Admin</em></span>
+    </div>
+    <nav class="admin-nav">
+      <a href="index.html" class="active">Dashboard</a>
+      <a href="produtos.html">Produtos</a>
+      <a href="categorias.html">Categorias</a>
+      <a href="analytics.html">Análise de usuários</a>
+      <a href="#" id="logoutBtn">Sair</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1>Dashboard</h1>
+      <span class="admin-email" id="adminEmail"></span>
+    </div>
+
+    <div class="stat-grid" id="statGrid">
+      <div class="stat-card"><div class="skeleton sk-line" style="width:40%; height:24px;"></div></div>
+      <div class="stat-card"><div class="skeleton sk-line" style="width:40%; height:24px;"></div></div>
+      <div class="stat-card"><div class="skeleton sk-line" style="width:40%; height:24px;"></div></div>
+      <div class="stat-card"><div class="skeleton sk-line" style="width:40%; height:24px;"></div></div>
+    </div>
+
+    <h3 style="margin-bottom:14px; font-size:1.05rem;">Produtos recentes</h3>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Nome</th><th>Preço</th><th>Status</th><th>Criado em</th></tr></thead>
+        <tbody id="recentProductsBody"><tr><td colspan="4">Carregando...</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/admin-common.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  function money(n) { return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+
+  async function load() {
+    const admin = await window.CrvlAdmin.guard();
+    if (!admin) return;
+    window.CrvlAdmin.bindLogout();
+
+    try {
+      const d = await window.CrvlApi.get('/admin/dashboard');
+      document.getElementById('statGrid').innerHTML = `
+        <div class="stat-card"><div class="n">${d.totalProducts}</div><div class="l">Produtos</div></div>
+        <div class="stat-card"><div class="n">${d.activeProducts}</div><div class="l">Ativos no catálogo</div></div>
+        <div class="stat-card"><div class="n">${d.outOfStock}</div><div class="l">Sem estoque</div></div>
+        <div class="stat-card"><div class="n">${d.totalCategories}</div><div class="l">Categorias</div></div>
+      `;
+      const rows = d.recentProducts.map((p) => `
+        <tr>
+          <td>${window.CrvlAdmin.escapeHtml(p.name)}</td>
+          <td>${money(p.price)}</td>
+          <td><span class="pill ${p.active ? 'pill-on' : 'pill-off'}">${p.active ? 'Ativo' : 'Inativo'}</span></td>
+          <td>${new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
+        </tr>`).join('');
+      document.getElementById('recentProductsBody').innerHTML = rows || '<tr><td colspan="4">Nenhum produto cadastrado ainda.</td></tr>';
+    } catch (err) {
+      window.CrvlAdmin.toast(err.message, true);
+    }
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>

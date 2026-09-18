@@ -1,0 +1,15 @@
+{
+  "name": "crvl-store",
+  "version": "1.0.0",
+  "description": "CRVL Store — site institucional + catálogo de produtos com painel administrativo. Netlify (Functions + Postgres/Supabase).",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "serverless-http": "^3.2.0",
+    "pg": "^8.12.0"
+  }
+}

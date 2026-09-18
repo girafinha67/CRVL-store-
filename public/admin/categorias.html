@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Categorias | Painel CRVL Store</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../assets/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../css/catalogo.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-logo">
+      <img src="../assets/logo-icon.png" alt="CRVL Store">
+      <span>CRVL <em style="color:var(--gold-bright); font-style:normal;">Admin</em></span>
+    </div>
+    <nav class="admin-nav">
+      <a href="index.html">Dashboard</a>
+      <a href="produtos.html">Produtos</a>
+      <a href="categorias.html" class="active">Categorias</a>
+      <a href="analytics.html">Análise de usuários</a>
+      <a href="#" id="logoutBtn">Sair</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h1>Categorias</h1>
+      <span class="admin-email" id="adminEmail"></span>
+    </div>
+
+    <div class="admin-toolbar">
+      <span></span>
+      <button class="btn btn-gold" id="newCategoryBtn" type="button">+ Nova categoria</button>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Ordem</th><th>Nome</th><th>Slug</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody id="categoriesBody"><tr><td colspan="5">Carregando...</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- Modal categoria -->
+<div class="modal-backdrop" id="categoryModalBackdrop">
+  <div class="modal-card">
+    <h3 id="categoryModalTitle">Nova categoria</h3>
+    <form id="categoryForm">
+      <input type="hidden" id="cat-id">
+      <div class="form-field full">
+        <label for="cat-name">Nome</label>
+        <input type="text" id="cat-name" required>
+      </div>
+      <div class="form-field full">
+        <label for="cat-order">Ordem de exibição</label>
+        <input type="number" id="cat-order" min="0" value="0">
+      </div>
+      <label class="checkbox-row" style="margin-bottom:6px;">
+        <input type="checkbox" id="cat-active" checked>
+        Categoria ativa (visível no catálogo)
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="categoryCancelBtn">Cancelar</button>
+        <button type="submit" class="btn btn-gold" id="categorySaveBtn">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal confirmação de exclusão -->
+<div class="modal-backdrop" id="deleteModalBackdrop">
+  <div class="modal-card" style="max-width:420px;">
+    <h3>Excluir categoria?</h3>
+    <p class="confirm-text">Os produtos dessa categoria não serão excluídos, apenas ficarão sem categoria. Essa ação não pode ser desfeita.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="deleteCancelBtn">Cancelar</button>
+      <button type="button" class="btn btn-gold" style="background:#e05a5a; border-color:#e05a5a;" id="deleteConfirmBtn">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/admin-common.js"></script>
+<script src="../js/admin-categorias.js"></script>
+</body>
+</html>
