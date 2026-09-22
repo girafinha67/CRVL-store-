@@ -32,6 +32,17 @@
     return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   }
 
+  // Escapa texto vindo do produto (nome, marca, etc.) antes de inserir no
+  // innerHTML do card. Sem isso, um nome de produto contendo HTML/script
+  // (cadastrado por engano ou por uma conta admin comprometida) executaria
+  // para QUALQUER visitante do catálogo público — o painel admin já escapa
+  // (ver admin-produtos.js), aqui faltava o mesmo cuidado.
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[c]));
+  }
+
   function activeFilterCount() {
     let n = 0;
     if (state.categories.length) n++;
@@ -162,11 +173,11 @@
       <article class="product-card reveal-scroll in-view" data-product-id="${p.id}">
         ${hasPromo ? '<span class="badge">Promoção</span>' : outOfStock ? '<span class="badge badge-out">Esgotado</span>' : ''}
         <a href="/produto.html?slug=${encodeURIComponent(p.slug)}" class="product-media" style="display:block;">
-          <img src="${img}" alt="${p.name}" loading="lazy">
+          <img src="${img}" alt="${esc(p.name)}" loading="lazy">
         </a>
         <div class="product-info">
-          <span class="product-cat">${catName}${p.brand ? ' · ' + p.brand : ''}</span>
-          <h3><a href="/produto.html?slug=${encodeURIComponent(p.slug)}" style="color:inherit;">${p.name}</a></h3>
+          <span class="product-cat">${esc(catName)}${p.brand ? ' · ' + esc(p.brand) : ''}</span>
+          <h3><a href="/produto.html?slug=${encodeURIComponent(p.slug)}" style="color:inherit;">${esc(p.name)}</a></h3>
           <div class="price-row">
             <span class="price-now">${money(hasPromo ? p.promo_price : p.price)}</span>
             ${hasPromo ? `<span class="price-old">${money(p.price)}</span>` : ''}

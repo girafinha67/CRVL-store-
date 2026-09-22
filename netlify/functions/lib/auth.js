@@ -6,7 +6,18 @@ const rateLimit = require('./rate-limit');
 
 const SESSION_SHORT_HOURS = 8; // sessão normal (sem "lembrar deste dispositivo")
 const SESSION_REMEMBER_DAYS = 30; // "dispositivo confiável"
-const IS_PROD = process.env.NODE_ENV === 'production';
+
+// Cookie "Secure" (só enviado por HTTPS): qualquer deploy real do Netlify
+// (produção, preview ou branch deploy) já roda sob HTTPS, então o padrão
+// correto é sempre marcar Secure — em vez de depender só de NODE_ENV=production
+// estar configurado manualmente nas env vars do Netlify (fácil de esquecer,
+// e nesse caso o cookie ficaria sem Secure em produção sem ninguém notar).
+// `netlify dev` (emulação local) é a única situação onde a página roda em
+// http:// puro, e o Netlify CLI seta NETLIFY_DEV=true nesse caso — é o sinal
+// que usamos para desligar o Secure só ali. NODE_ENV=development continua
+// funcionando como desligamento manual para qualquer outro setup local.
+const IS_LOCAL_DEV = process.env.NETLIFY_DEV === 'true' || process.env.NODE_ENV === 'development';
+const IS_PROD = !IS_LOCAL_DEV;
 const COOKIE_NAME = 'crvl_session';
 
 function verifyPassword(password, salt, expectedHash) {

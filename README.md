@@ -52,7 +52,12 @@ crvl-store/
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role key (só no backend, nunca no frontend) |
 | `ADMIN_EMAIL` | E-mail do primeiro/único administrador |
 | `ADMIN_PASSWORD` | Senha do administrador (defina só no Netlify, nunca no repo) |
-| `NODE_ENV` | `production` |
+
+`NODE_ENV` **não precisa mais ser configurada manualmente**: o cookie de
+sessão já detecta sozinho se está rodando num deploy real do Netlify
+(sempre HTTPS → cookie `Secure`) ou em `netlify dev` local (HTTP →
+sem `Secure`). Só defina `NODE_ENV=development` se quiser forçar esse modo
+em outro tipo de ambiente local.
 
 ## 2. Antes do primeiro deploy
 1. Crie um projeto no Supabase (se ainda não tiver um).

@@ -5,6 +5,15 @@
     return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   }
 
+  // Escapa texto do produto antes de inserir no innerHTML da página (nome,
+  // marca, SKU, descrição, tamanhos, cores) — mesmo motivo do catalogo.js:
+  // sem isso, HTML/script num campo de produto rodaria para todo visitante.
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[c]));
+  }
+
   function notFound() {
     document.getElementById('productRoot').innerHTML = `
       <div class="page-hero" style="text-align:center;">
@@ -46,25 +55,25 @@
       },
     });
 
-    const sizeChips = (p.sizes || []).map((s) => `<span class="pd-chip">${s}</span>`).join('') || '<span style="color:var(--grey); font-size:0.85rem;">Não informado</span>';
-    const colorChips = (p.colors || []).map((c) => `<span class="pd-chip">${c}</span>`).join('') || '<span style="color:var(--grey); font-size:0.85rem;">Não informado</span>';
+    const sizeChips = (p.sizes || []).map((s) => `<span class="pd-chip">${esc(s)}</span>`).join('') || '<span style="color:var(--grey); font-size:0.85rem;">Não informado</span>';
+    const colorChips = (p.colors || []).map((c) => `<span class="pd-chip">${esc(c)}</span>`).join('') || '<span style="color:var(--grey); font-size:0.85rem;">Não informado</span>';
 
     document.getElementById('productRoot').innerHTML = `
       <div class="product-detail">
         <div>
-          <div class="pd-gallery-main"><img id="mainImg" src="${images[0]}" alt="${p.name}"></div>
-          ${images.length > 1 ? `<div class="pd-thumbs">${images.map((img, i) => `<img src="${img}" class="${i === 0 ? 'active' : ''}" data-img="${img}" alt="${p.name} - foto ${i + 1}">`).join('')}</div>` : ''}
+          <div class="pd-gallery-main"><img id="mainImg" src="${images[0]}" alt="${esc(p.name)}"></div>
+          ${images.length > 1 ? `<div class="pd-thumbs">${images.map((img, i) => `<img src="${img}" class="${i === 0 ? 'active' : ''}" data-img="${img}" alt="${esc(p.name)} - foto ${i + 1}">`).join('')}</div>` : ''}
         </div>
         <div>
-          <p class="breadcrumb"><a href="/">Início</a> / <a href="/catalogo.html">Catálogo</a> / ${p.name}</p>
-          <span class="pd-cat">${categoryName || ''}</span>
-          <h1 class="pd-title">${p.name}</h1>
-          ${p.brand ? `<p class="pd-brand">${p.brand}${p.sku ? ' · SKU ' + p.sku : ''}</p>` : ''}
+          <p class="breadcrumb"><a href="/">Início</a> / <a href="/catalogo.html">Catálogo</a> / ${esc(p.name)}</p>
+          <span class="pd-cat">${esc(categoryName || '')}</span>
+          <h1 class="pd-title">${esc(p.name)}</h1>
+          ${p.brand ? `<p class="pd-brand">${esc(p.brand)}${p.sku ? ' · SKU ' + esc(p.sku) : ''}</p>` : ''}
           <div class="pd-price-row">
             <span class="pd-price-now">${money(hasPromo ? p.promo_price : p.price)}</span>
             ${hasPromo ? `<span class="pd-price-old">${money(p.price)}</span>` : ''}
           </div>
-          ${p.description ? `<p class="pd-desc">${p.description}</p>` : ''}
+          ${p.description ? `<p class="pd-desc">${esc(p.description)}</p>` : ''}
           <div class="pd-options">
             <h4>Tamanhos disponíveis</h4>
             <div class="pd-chip-row">${sizeChips}</div>
