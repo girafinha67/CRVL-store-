@@ -127,4 +127,62 @@
   }
   makeDraggable(document.querySelector('.model-row'));
 
+  // Widget "Sobre Nós" — quadradinho de vídeo no canto inferior esquerdo
+  var sobreWidget = document.getElementById('sobreWidget');
+  var sobreWidgetOpen = document.getElementById('sobreWidgetOpen');
+  var sobreWidgetClose = document.getElementById('sobreWidgetClose');
+  var sobreModal = document.getElementById('sobreModal');
+  var sobreModalClose = document.getElementById('sobreModalClose');
+  var sobreModalVideo = document.getElementById('sobreModalVideo');
+  var sobreModalMute = document.getElementById('sobreModalMute');
+
+  function openSobreModal(){
+    if(!sobreModal) return;
+    sobreModal.classList.add('open');
+    sobreModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    if(sobreModalVideo){
+      sobreModalVideo.currentTime = 0;
+      sobreModalVideo.muted = false;
+      if(sobreModalMute){ sobreModalMute.classList.remove('is-muted'); }
+      sobreModalVideo.play().catch(function(){
+        // Autoplay com som pode ser bloqueado pelo navegador — cai para mudo
+        sobreModalVideo.muted = true;
+        if(sobreModalMute){ sobreModalMute.classList.add('is-muted'); }
+        sobreModalVideo.play().catch(function(){});
+      });
+    }
+  }
+
+  function closeSobreModal(){
+    if(!sobreModal) return;
+    sobreModal.classList.remove('open');
+    sobreModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if(sobreModalVideo){ sobreModalVideo.pause(); }
+  }
+
+  if(sobreWidgetOpen){ sobreWidgetOpen.addEventListener('click', openSobreModal); }
+  if(sobreModalClose){ sobreModalClose.addEventListener('click', closeSobreModal); }
+  if(sobreModal){
+    sobreModal.addEventListener('click', function(e){
+      if(e.target === sobreModal){ closeSobreModal(); }
+    });
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){ closeSobreModal(); }
+  });
+  if(sobreModalMute && sobreModalVideo){
+    sobreModalMute.addEventListener('click', function(){
+      sobreModalVideo.muted = !sobreModalVideo.muted;
+      sobreModalMute.classList.toggle('is-muted', sobreModalVideo.muted);
+    });
+  }
+  if(sobreWidgetClose && sobreWidget){
+    sobreWidgetClose.addEventListener('click', function(e){
+      e.stopPropagation();
+      sobreWidget.classList.add('hidden');
+    });
+  }
+
 })();

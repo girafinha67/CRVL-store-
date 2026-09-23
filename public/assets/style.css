@@ -331,7 +331,8 @@ button{font-family:inherit;}
   background:var(--dark-panel);
 }
 .promo-hero-media{ position:absolute; inset:0; z-index:0; }
-.promo-hero-media img{
+.promo-hero-media img,
+.promo-hero-media video{
   width:100%; height:100%; object-fit:cover; object-position:center 35%;
   filter:saturate(1.15) contrast(1.05);
 }
@@ -825,4 +826,87 @@ button{font-family:inherit;}
   .fab{ width:48px; height:48px; right:14px; }
   .fab-whatsapp{ bottom:18px; }
   .fab-top{ bottom:74px; }
+}
+
+/* ============ Widget "Sobre Nós" (vídeo, canto inferior esquerdo) ============ */
+.sobre-widget{
+  position:fixed; left:16px; bottom:24px; z-index:95;
+  width:96px; border-radius:14px; overflow:hidden;
+  background:#0a0a0a;
+  box-shadow:0 14px 34px -10px rgba(0,0,0,0.65);
+  border:1px solid rgba(255,90,31,0.4);
+  transition:transform .3s var(--ease), opacity .3s;
+}
+.sobre-widget.hidden{ opacity:0; transform:translateY(12px) scale(.92); pointer-events:none; }
+.sobre-widget-bar{
+  display:flex; align-items:center; justify-content:space-between; gap:6px;
+  padding:6px 8px;
+  background:var(--flame-gradient);
+  color:var(--ink-on-accent); font-family:var(--font-body); font-weight:700; font-size:0.62rem;
+  letter-spacing:0.01em;
+}
+.sobre-widget-bar span{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sobre-widget-close{
+  flex:none; width:16px; height:16px; border:0; background:none; color:#fff; opacity:0.85;
+  display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;
+}
+.sobre-widget-close:hover{ opacity:1; }
+.sobre-widget-play{
+  position:relative; display:block; width:100%; aspect-ratio:9/12; border:0; padding:0; margin:0;
+  background:#000; cursor:pointer;
+}
+.sobre-widget-video{ width:100%; height:100%; object-fit:cover; display:block; }
+.sobre-widget-icon{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  background:rgba(10,8,6,0.28); color:#fff;
+  transition:background .25s;
+}
+.sobre-widget-play:hover .sobre-widget-icon{ background:rgba(10,8,6,0.45); }
+
+.sobre-modal{
+  position:fixed; inset:0; z-index:200;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(6,4,8,0.88);
+  opacity:0; pointer-events:none;
+  transition:opacity .25s var(--ease);
+}
+.sobre-modal.open{ opacity:1; pointer-events:auto; }
+.sobre-modal-inner{
+  position:relative; width:min(400px, 92vw); height:min(86svh, 720px);
+  border-radius:18px; overflow:hidden;
+  background:#000;
+  box-shadow:0 30px 70px -20px rgba(0,0,0,0.8);
+  transform:scale(.94); transition:transform .25s var(--ease);
+}
+.sobre-modal.open .sobre-modal-inner{ transform:scale(1); }
+.sobre-modal-bar{
+  position:absolute; top:0; left:0; right:0; z-index:2;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px;
+  background:var(--flame-gradient);
+  color:var(--ink-on-accent); font-family:var(--font-body); font-weight:800; font-size:0.95rem;
+}
+.sobre-modal-close{
+  width:28px; height:28px; border-radius:50%; border:0; background:rgba(255,255,255,0.18); color:#fff;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.sobre-modal-close:hover{ background:rgba(255,255,255,0.3); }
+.sobre-modal-video-wrap{ position:relative; width:100%; height:100%; }
+.sobre-modal-video{ width:100%; height:100%; object-fit:cover; display:block; }
+.sobre-modal-mute{
+  position:absolute; top:66px; right:14px; z-index:2;
+  width:38px; height:38px; border-radius:50%; border:0; cursor:pointer;
+  background:rgba(255,255,255,0.92); color:#0a0a0a;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 8px 20px -6px rgba(0,0,0,0.5);
+}
+.sobre-modal-mute .icon-unmuted{ display:none; }
+.sobre-modal-mute.is-muted .icon-muted{ display:block; }
+.sobre-modal-mute.is-muted .icon-unmuted{ display:none; }
+.sobre-modal-mute:not(.is-muted) .icon-muted{ display:none; }
+.sobre-modal-mute:not(.is-muted) .icon-unmuted{ display:block; }
+
+@media (max-width:600px){
+  .sobre-widget{ left:12px; bottom:18px; width:78px; }
+  .sobre-widget-bar{ font-size:0.56rem; padding:5px 6px; }
 }

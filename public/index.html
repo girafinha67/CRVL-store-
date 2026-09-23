@@ -95,7 +95,7 @@
   <!-- ============ HERO / BANNER PRINCIPAL ============ -->
   <section class="promo-hero" id="hero">
     <div class="promo-hero-media" aria-hidden="true">
-      <img src="assets/logo-banner.png" alt="">
+      <video class="hero-video" src="assets/hero-bg.mp4" poster="assets/hero-poster.jpg" autoplay muted loop playsinline></video>
       <div class="promo-hero-overlay"></div>
     </div>
     <div class="promo-hero-content">
@@ -484,6 +484,40 @@
 <a class="fab fab-top" id="backToTop" href="#top" aria-label="Voltar ao topo">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </a>
+
+<!-- ============ WIDGET DE VÍDEO "SOBRE NÓS" ============ -->
+<div class="sobre-widget" id="sobreWidget">
+  <div class="sobre-widget-bar">
+    <span>Sobre Nós</span>
+    <button type="button" class="sobre-widget-close" id="sobreWidgetClose" aria-label="Fechar vídeo Sobre Nós">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" width="14" height="14"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <button type="button" class="sobre-widget-play" id="sobreWidgetOpen" aria-label="Assistir vídeo Sobre Nós">
+    <video class="sobre-widget-video" src="assets/sobre-video.mp4" muted loop autoplay playsinline></video>
+    <span class="sobre-widget-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
+    </span>
+  </button>
+</div>
+
+<div class="sobre-modal" id="sobreModal" aria-hidden="true">
+  <div class="sobre-modal-inner">
+    <div class="sobre-modal-bar">
+      <span>Sobre Nós</span>
+      <button type="button" class="sobre-modal-close" id="sobreModalClose" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" width="18" height="18"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="sobre-modal-video-wrap">
+      <video class="sobre-modal-video" id="sobreModalVideo" src="assets/sobre-video.mp4" playsinline></video>
+      <button type="button" class="sobre-modal-mute" id="sobreModalMute" aria-label="Ativar som">
+        <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M23 9l-6 6M17 9l6 6"/></svg>
+        <svg class="icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
 
 <script src="assets/script.js"></script>
 <script src="js/analytics-track.js" defer></script>

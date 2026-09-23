@@ -24,6 +24,7 @@
   let lastTrackedCategories = '';
 
   const grid = document.getElementById('productsGrid');
+  const shelvesContainer = document.getElementById('catalogShelves');
   const resultCount = document.getElementById('resultCount');
   const pagination = document.getElementById('pagination');
   const filterCountEl = document.getElementById('filterCount');
@@ -196,6 +197,68 @@
       .join('');
   }
 
+  // "Vitrine sem filtro": nenhum filtro/busca aplicado — mostra uma prateleira
+  // por categoria (até 6 produtos cada) em vez da grade única paginada.
+  function isDefaultView() {
+    return !state.q && !state.categories.length && !state.brand && !state.minPrice
+      && !state.maxPrice && !state.size && !state.color && !state.inStock && !state.promo;
+  }
+
+  function shelfSkeletonHtml() {
+    return window.CRVL_CATEGORY_TAGS.slice(0, 3).map(() => `
+      <div class="catalog-shelf">
+        <div class="catalog-shelf-head">
+          <div class="skeleton sk-line" style="width:140px; height:20px;"></div>
+        </div>
+        <div class="catalog-shelf-grid">${skeletonHtml(6)}</div>
+      </div>
+    `).join('');
+  }
+
+  async function loadShelves() {
+    shelvesContainer.style.display = '';
+    grid.style.display = 'none';
+    pagination.innerHTML = '';
+    resultCount.textContent = '';
+    shelvesContainer.innerHTML = shelfSkeletonHtml();
+
+    try {
+      const results = await Promise.all(
+        window.CRVL_CATEGORY_TAGS.map((tag) =>
+          window.CrvlApi
+            .get(`/products?categories=${encodeURIComponent(tag.slug)}&sort=${encodeURIComponent(state.sort)}&page=1&pageSize=6`)
+            .then((data) => ({ tag, data }))
+            .catch(() => ({ tag, data: { products: [], total: 0 } }))
+        )
+      );
+
+      const brandsFound = results.map((r) => r.data.brands).find((b) => b && b.length);
+      if (brandsFound) brands = brandsFound;
+      if (!grid.dataset.brandsBound) {
+        grid.dataset.brandsBound = '1';
+        renderFilters();
+      }
+
+      const shelves = results.filter((r) => r.data.products && r.data.products.length);
+      if (!shelves.length) {
+        shelvesContainer.innerHTML = '<div class="empty-state">Nenhum produto cadastrado ainda.</div>';
+        return;
+      }
+
+      shelvesContainer.innerHTML = shelves.map(({ tag, data }) => `
+        <div class="catalog-shelf">
+          <div class="catalog-shelf-head">
+            <h2>${esc(tag.label)}</h2>
+            <a class="catalog-shelf-more" href="catalogo.html?categoria=${encodeURIComponent(tag.slug)}">Ver mais como estes</a>
+          </div>
+          <div class="catalog-shelf-grid">${data.products.map(cardHtml).join('')}</div>
+        </div>
+      `).join('');
+    } catch (err) {
+      shelvesContainer.innerHTML = `<div class="empty-state">Não foi possível carregar o catálogo agora. ${err.message}</div>`;
+    }
+  }
+
   function renderPagination(total, page, pageSize) {
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
     if (totalPages <= 1) { pagination.innerHTML = ''; return; }
@@ -219,6 +282,12 @@
   }
 
   async function load() {
+    if (isDefaultView()) {
+      await loadShelves();
+      return;
+    }
+    shelvesContainer.style.display = 'none';
+    grid.style.display = '';
     grid.innerHTML = skeletonHtml(8);
     resultCount.textContent = 'Carregando...';
     const params = new URLSearchParams();
